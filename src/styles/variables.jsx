@@ -26,6 +26,7 @@ import { BsBarChartLine } from "react-icons/bs";
 import { AiOutlineCalculator } from "react-icons/ai";
 import { BsCalendarCheck } from "react-icons/bs";
 import { IoIosArrowForward } from "react-icons/io";
+import { RxDoubleArrowLeft } from "react-icons/rx";
 
 import { GrFormPrevious, GrCaretNext } from "react-icons/gr";
 import { MdOutlineBorderAll } from "react-icons/md";
@@ -135,4 +136,5 @@ export const v = {
   prevIcon: GrFormPrevious,
   nextIcon: GrCaretNext,
   allIcon: MdOutlineBorderAll,
+  firstPageIcon: RxDoubleArrowLeft,
 };

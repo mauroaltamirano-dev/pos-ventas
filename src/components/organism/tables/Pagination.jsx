@@ -9,14 +9,14 @@ export const Pagination = ({ table }) => {
         disabled={!table.getCanPreviousPage()}
         func={() => table.setPageIndex(0)}
         bgColor="#F3D20C"
-        icon={<v.allIcon />}
+        icon={<v.firstPageIcon />}
       />
 
       <Btn1
         disabled={!table.getCanPreviousPage()}
         func={() => table.previousPage()}
-        bgcolor="#F3D20C"
-        icono={<v.arrowLeftIcon />}
+        bgColor="#F3D20C"
+        icon={<v.arrowLeftIcon />}
       />
 
       <span>{table.getState().pagination.pageIndex + 1}</span>
@@ -25,8 +25,8 @@ export const Pagination = ({ table }) => {
       <Btn1
         disabled={!table.getCanNextPage()}
         func={() => table.nextPage()}
-        bgcolor="#F3D20C"
-        icono={<v.arrowRightIcon />}
+        bgColor="#F3D20C"
+        icon={<v.arrowRightIcon />}
       />
     </Container>
   );

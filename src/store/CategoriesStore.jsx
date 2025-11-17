@@ -9,48 +9,67 @@ import {
 
 export const useCategoriesStore = create((set, get) => ({
   search: "",
-  setSearch: (p) => {
-    set({ search: p });
-  },
   dataCategories: [],
   categoriesItemSelect: [],
   params: {},
+
+  setSearch: (p) => set({ search: p }),
+
   showCategories: async (p) => {
-    const response = await showCategories(p);
-    set({ params: p });
-    set({ dataCategories: response });
-    set({ categoriesItemSelect: response[0] || [] });
-    return response;
+    try {
+      const response = await showCategories(p);
+      set({
+        params: p,
+        dataCategories: response,
+        categoriesItemSelect: response[0] || [],
+      });
+      return response;
+    } catch (err) {
+      console.error("Error al mostrar categorías:", err);
+      return [];
+    }
   },
 
-  selectCategory: (p) => {
-    set({ categoriesItemSelect: p });
-  },
+  selectCategory: (p) => set({ categoriesItemSelect: p }),
 
   insertCategories: async (p, file) => {
-    await InsertCategories(p, file);
-    const { showCategories } = get();
-    const { params } = get();
-    set(showCategories(params));
+    try {
+      await InsertCategories(p, file);
+      const { showCategories, params } = get();
+      if (params) await showCategories(params);
+    } catch (err) {
+      console.error("Error al insertar categoría:", err);
+    }
   },
 
   deleteCategories: async (p) => {
-    await deleteCategories(p);
-    const { showCategories } = get();
-    const { params } = get();
-    set(showCategories(params));
+    try {
+      await deleteCategories(p);
+      const { showCategories, params } = get();
+      if (params) await showCategories(params);
+    } catch (err) {
+      console.error("Error al eliminar categoría:", err);
+    }
   },
 
   editCategory: async (p, fileold, filenew) => {
-    await editCategories(p, fileold, filenew);
-    const { showCategories } = get();
-    const { params } = get();
-    set(showCategories(params));
+    try {
+      await editCategories(p, fileold, filenew);
+      const { showCategories, params } = get();
+      if (params) await showCategories(params);
+    } catch (err) {
+      console.error("Error al editar categoría:", err);
+    }
   },
 
   searchCategories: async (p) => {
-    const response = await searchCategories(p);
-    set({ dataCategories: response });
-    return response;
+    try {
+      const response = await searchCategories(p);
+      set({ dataCategories: response });
+      return response;
+    } catch (err) {
+      console.error("Error al buscar categorías:", err);
+      return [];
+    }
   },
 }));

@@ -6,6 +6,7 @@ import {
   ProtectedRoutes,
   Configs,
   Categories,
+  Products,
   useUserStore,
   Spinner1,
   useCompanyStore,
@@ -19,11 +20,13 @@ export function MyRoutes() {
   const { isLoading, error } = useQuery({
     queryKey: "Show Users",
     queryFn: showUsers,
+    refetchOnWindowFocus: false,
   });
-  const {} = useQuery({
+  const { data: dtCompany } = useQuery({
     queryKey: ["Show Company", users?.id],
     queryFn: () => showCompany({ _id_user: users?.id }),
     enabled: !!users,
+    refetchOnWindowFocus: false,
   });
 
   if (isLoading) return <Spinner1 />;
@@ -38,6 +41,7 @@ export function MyRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/configs" element={<Configs />} />
         <Route path="/configs/categories" element={<Categories />} />
+        <Route path="/configs/products" element={<Products />} />
       </Route>
 
       <Route path="/login" element={<Login />} />

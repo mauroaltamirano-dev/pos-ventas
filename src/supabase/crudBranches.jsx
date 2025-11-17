@@ -1,10 +1,13 @@
 import Swal from "sweetalert2";
 import { supabase } from "../index.js";
 
-const table = "modules";
+const table = "branches";
 
-export async function ShowModules() {
-  const { data, error } = await supabase.from(table).select();
+export async function ShowBranches(p) {
+  const { data, error } = await supabase
+    .from(table)
+    .select()
+    .eq("id_company", p.id_company);
 
   if (error) {
     Swal.fire({

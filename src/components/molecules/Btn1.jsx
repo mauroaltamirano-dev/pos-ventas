@@ -10,13 +10,14 @@ export function Btn1({
   color,
   disabled,
   width,
+  type = "button",
 }) {
   return (
     <Container
       $width={width}
       disabled={disabled}
       $color={color}
-      type="submit"
+      type={type}
       $bgColor={bgColor}
       onClick={func}
     >
@@ -24,9 +25,13 @@ export function Btn1({
         <Icono $color={color}>{icon}</Icono>
         {title && (
           <span className="btn">
-            <a href={url} target="_blank">
-              {title}
-            </a>
+            {url ? (
+              <a href={url} target="_blank" rel="noopener noreferrer">
+                {title}
+              </a>
+            ) : (
+              title
+            )}
           </span>
         )}
       </section>
@@ -34,7 +39,7 @@ export function Btn1({
   );
 }
 
-const Container = styled.div`
+const Container = styled.button`
   box-sizing: border-box;
   font-weight: 700;
   display: flex;

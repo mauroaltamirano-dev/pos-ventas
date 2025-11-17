@@ -3,10 +3,10 @@
 import styled from "styled-components";
 import {
   ContentActionTable,
-  useCategoriesStore,
   Pagination,
   ImageContent,
   Icono,
+  useProductsStore,
 } from "../../../index.js";
 import Swal from "sweetalert2";
 import { v } from "../../../styles/variables.jsx";
@@ -21,7 +21,7 @@ import {
 } from "@tanstack/react-table";
 import { FaArrowsAltV } from "react-icons/fa";
 
-export function TableCategorias({
+export function TableProducts({
   data,
   setOpenRegister,
   setDataSelect,
@@ -32,8 +32,8 @@ export function TableCategorias({
   const [datas, setData] = useState(data);
   const [columnFilters, setColumnFilters] = useState([]);
 
-  const { deleteCategories } = useCategoriesStore();
-  function deleteCategory(p) {
+  const { deleteProducts } = useProductsStore();
+  function deleteProduct(p) {
     if (p.nombre === "General") {
       Swal.fire({
         icon: "error",
@@ -53,7 +53,7 @@ export function TableCategorias({
       confirmButtonText: "Sí, eliminar",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await deleteCategories({ id: p.id });
+        await deleteProducts({ id: p.id });
       }
     });
   }
@@ -142,7 +142,7 @@ export function TableCategorias({
         <td data-title="Acciones" className="ContentCell">
           <ContentActionTable
             functionEdit={() => edit(info.row.original)}
-            functionDelete={() => deleteCategory(info.row.original)}
+            functionDelete={() => deleteProduct(info.row.original)}
           />
         </td>
       ),

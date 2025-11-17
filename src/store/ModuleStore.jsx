@@ -1,10 +1,10 @@
 import { create } from "zustand";
-import { showModules } from "../index.js";
+import { ShowModules } from "../index.js";
 
 export const useModuleStore = create((set) => ({
   modules: [],
   showModules: async () => {
-    const response = await showModules();
+    const response = await ShowModules();
     set({ modules: response });
     return response;
   },

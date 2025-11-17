@@ -1,23 +1,23 @@
 import styled from "styled-components";
 import {
   Btn1,
-  RegisterCategories,
+  RegisterProducts,
   Search,
   TableCategorias,
   Title,
-  useCategoriesStore,
+  useProductsStore,
 } from "../../index.js";
 import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
 
-export function CategoriesTemplate() {
+export function ProductsTemplate() {
   const [openRegister, setOpenRegister] = useState(false);
   const [action, setAction] = useState("");
   const [dataSelect, setDataSelect] = useState([]);
   const [isExploding, setIsExploding] = useState(false);
 
-  const { dataCategories, setSearch } = useCategoriesStore();
+  const { productsData, setSearch } = useProductsStore();
 
   function newRegister() {
     setOpenRegister(!openRegister);
@@ -28,16 +28,14 @@ export function CategoriesTemplate() {
 
   return (
     <Container>
-      {openRegister && (
-        <RegisterCategories
-          setIsExploding={setIsExploding}
-          onClose={() => setOpenRegister(!openRegister)}
-          dataSelect={dataSelect}
-          action={action}
-        />
-      )}
+      <RegisterProducts
+        setIsExploding={setIsExploding}
+        onClose={() => setOpenRegister(!openRegister)}
+        dataSelect={dataSelect}
+        action={action}
+      />
       <section className="area1">
-        <Title>Categorías</Title>
+        <Title>Productos</Title>
         <Btn1
           func={newRegister}
           bgColor={v.mainColor}
@@ -56,7 +54,7 @@ export function CategoriesTemplate() {
           setDataSelect={setDataSelect}
           setAction={setAction}
           setOpenRegister={setOpenRegister}
-          data={dataCategories}
+          data={productsData}
         />
       </section>
     </Container>

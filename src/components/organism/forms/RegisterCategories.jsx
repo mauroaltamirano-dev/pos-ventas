@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
@@ -21,12 +22,12 @@ export function RegisterCategories({
   setIsExploding,
 }) {
   const { insertCategories, editCategory } = useCategoriesStore();
-  const { dataCompany } = useCompanyStore();
+  const { companyData } = useCompanyStore();
   const [currentColor, setColor] = useState("#F44336");
   const [file, setFile] = useState([]);
   const ref = useRef(null);
   const [fileUrl, setFileUrl] = useState();
-  function elegirColor(color) {
+  function pickColor(color) {
     setColor(color.hex);
   }
   const {
@@ -36,7 +37,7 @@ export function RegisterCategories({
   } = useForm();
   const { isPending, mutate: doInsertar } = useMutation({
     mutationFn: insert,
-    mutationKey: "insertar categorías",
+    mutationKey: ["insertar-categorías"],
     onError: (err) => console.log("El error", err.message),
     onSuccess: () => closeForm(),
   });
@@ -48,20 +49,21 @@ export function RegisterCategories({
     setIsExploding(true);
   };
   async function insert(data) {
-    if (action === "Editar") {
+    if (action === "Edit") {
       const p = {
         _name: ConverterCapitalize(data.description),
-        _id_company: dataCompany.id,
+        _idcompany: companyData.id,
         _color: currentColor,
         _id: dataSelect.id,
       };
-      await editCategory(p, dataSelect.icono, file);
+      console.log("editar", p);
+      await editCategory(p, dataSelect.icon, file);
     } else {
       const p = {
         _name: ConverterCapitalize(data.description),
         _color: currentColor,
         _icon: "-",
-        _id_company: dataCompany.id,
+        _id_company: companyData.id,
       };
 
       await insertCategories(p, file);
@@ -83,7 +85,7 @@ export function RegisterCategories({
     }
   }
   useEffect(() => {
-    if (action === "Editar") {
+    if (action === "Edit") {
       setColor(dataSelect.color);
       setFileUrl(dataSelect.icono);
     }
@@ -97,7 +99,7 @@ export function RegisterCategories({
           <div className="headers">
             <section>
               <h1>
-                {action == "Editar"
+                {action == "Edit"
                   ? "Editar categoría"
                   : "Registrar nueva categoría"}
               </h1>
@@ -118,10 +120,10 @@ export function RegisterCategories({
 
             <Btn1
               func={openImages}
-              titulo="+imagen(opcional)"
+              title="+imagen(opcional)"
               color="#5f5f5f"
-              bgcolor="rgb(183, 183, 182)"
-              icono={<v.supabaseIcon />}
+              bgColor="rgb(183, 183, 182)"
+              icon={<v.supabaseIcon />}
             />
             <input
               type="file"
@@ -135,7 +137,7 @@ export function RegisterCategories({
                 <InputText icono={<v.arrowRightIcon />}>
                   <input
                     className="form__field"
-                    defaultValue={dataSelect.nombre}
+                    defaultValue={dataSelect.name}
                     type="text"
                     placeholder="categoría"
                     {...register("description", {
@@ -155,11 +157,16 @@ export function RegisterCategories({
                   <span>Color</span>
                 </ContentTitle>
                 <div className="colorPickerContent">
-                  <CirclePicker onChange={elegirColor} color={currentColor} />
+                  <CirclePicker onChange={pickColor} color={currentColor} />
                 </div>
               </article>
 
-              <Btn1 icono={<v.saveIcon />} titulo="Guardar" bgcolor="#F9D70B" />
+              <Btn1
+                type="submit"
+                icon={<v.saveIcon />}
+                title="Guardar"
+                bgColor="#F9D70B"
+              />
             </section>
           </form>
         </div>

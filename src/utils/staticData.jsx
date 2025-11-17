@@ -126,12 +126,6 @@ export const configurationModulesData = [
     icon: "https://i.ibb.co/VYbMRLZ/categoria.png",
     link: "/configs/categories",
   },
-  {
-    title: "Marca de productos",
-    subtitle: "Gestiona tus marcas",
-    icon: "https://i.ibb.co/1qsbCRb/piensa-fuera-de-la-caja.png",
-    link: "/configs/brand",
-  },
 ];
 
 export const dataUserType = [
