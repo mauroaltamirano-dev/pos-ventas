@@ -7,6 +7,7 @@ export * from "./components/molecules/Btn1";
 export * from "./components/molecules/ImageContent";
 export * from "./components/molecules/Spinner1";
 export * from "./components/organism/Footer";
+export * from "./components/organism/ListSelect";
 export * from "./components/organism/Search";
 export * from "./components/organism/Selector";
 export * from "./components/organism/Switch1";

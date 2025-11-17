@@ -6,12 +6,14 @@ import {
   useProductsStore,
   useCompanyStore,
   useBranchesStore,
+  useCategoriesStore,
 } from "../index.js";
 
 export function Products() {
   const { showProducts, findProducts, search } = useProductsStore();
   const { showBranches } = useBranchesStore();
   const { companyData } = useCompanyStore();
+  const { showCategories } = useCategoriesStore();
   const { isLoading, error } = useQuery({
     queryKey: ["Mostrar productos", companyData?.id],
     queryFn: () => showProducts({ id_company: companyData?.id }),
@@ -30,6 +32,14 @@ export function Products() {
   useQuery({
     queryKey: ["Mostrar sucursales", companyData?.id],
     queryFn: () => showBranches({ id_company: companyData?.id }),
+    enabled: !!companyData,
+    refetchOnWindowFocus: false,
+  });
+
+  // show categories
+  useQuery({
+    queryKey: ["Mostrar categories", companyData?.id],
+    queryFn: () => showCategories({ id_company: companyData?.id }),
     enabled: !!companyData,
     refetchOnWindowFocus: false,
   });

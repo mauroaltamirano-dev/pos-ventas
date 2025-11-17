@@ -11,6 +11,8 @@ import {
   Switch1,
   Selector,
   useBranchesStore,
+  ListSelect,
+  useCategoriesStore,
 } from "../../../index.js";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
@@ -23,10 +25,15 @@ export function RegisterProducts({
   action,
   setIsExploding,
 }) {
-  const { branchesItemSelect } = useBranchesStore();
+  const { branchesItemSelect, branches, selectBranch } = useBranchesStore();
   const { insertProducts, editProducts } = useProductsStore();
   const { companyData } = useCompanyStore();
+  const { dataCategories, categoriesItemSelect, selectCategory } =
+    useCategoriesStore();
+
   const [stateInventory, setStateInventory] = useState(false);
+  const [stateBranchesList, setStateBranchesList] = useState(false);
+  const [stateListCategories, setStateListCategories] = useState(false);
 
   const {
     register,
@@ -67,6 +74,16 @@ export function RegisterProducts({
 
       await insertProducts(p);
     }
+  }
+
+  function toggleCategoriesList() {
+    setStateListCategories((prev) => !prev);
+    setStateBranchesList(false);
+  }
+
+  function toggleBranchesList() {
+    setStateBranchesList((prev) => !prev);
+    setStateListCategories(false);
   }
 
   return (
@@ -185,6 +202,23 @@ export function RegisterProducts({
 
             <section className="section2">
               <ContainerSelector>
+                <label>Categoría: </label>
+                <Selector
+                  color="#fc6027"
+                  text1={"🔖"}
+                  text2={categoriesItemSelect?.name}
+                  func={toggleCategoriesList}
+                  state={stateListCategories}
+                />
+                <ListSelect
+                  data={dataCategories}
+                  top={"4rem"}
+                  setState={toggleCategoriesList}
+                  func={selectCategory}
+                  state={stateListCategories}
+                />
+              </ContainerSelector>
+              <ContainerSelector>
                 <label>Controlar Stock: </label>
                 <Switch1
                   state={stateInventory}
@@ -199,6 +233,15 @@ export function RegisterProducts({
                       color="#fc6027"
                       text1={"🏢"}
                       text2={branchesItemSelect?.name}
+                      func={toggleBranchesList}
+                      state={stateBranchesList}
+                    />
+                    <ListSelect
+                      data={branches}
+                      top={"4rem"}
+                      setState={toggleBranchesList}
+                      func={selectBranch}
+                      state={stateBranchesList}
                     />
                   </ContainerSelector>
                   <article>

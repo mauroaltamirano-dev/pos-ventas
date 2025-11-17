@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
   supabase,
   showUsers,
@@ -34,38 +34,40 @@ export const AuthContextProvider = ({ children }) => {
     try {
       // 1️⃣ Verificar si el usuario ya existe
       const existingUser = await showUsers({ id_auth });
-      if (existingUser && existingUser.length > 0) {
-        console.log("El usuario ya existe, no se crea nuevamente.");
+
+      if (existingUser) {
+        console.log("El usuario ya tiene asignado esta compañía.");
         return;
       }
 
       // 2️⃣ Crear compañía
       const company = await InsertCompany({ id_auth });
-      if (!company?.id) {
-        console.error("No se pudo crear la compañía.");
-        return;
+
+      // Si falló la creación de company
+      if (!company || !company.id) {
+        console.warn("No se pudo crear la compañía. Deteniendo proceso.");
+        return; // ⛔ Evita errores posteriores
       }
 
-      // 3️⃣ Esperar trigger
+      // 3️⃣ Esperar el trigger
       await new Promise((r) => setTimeout(r, 1500));
 
+      // 4️⃣ Obtener documentType de manera segura
       const documentType = await showDocumentType({ id_company: company.id });
-      if (!documentType?.[0]) {
-        console.error(
-          "No se encontró documenttype para la compañía:",
-          company.id
-        );
+
+      if (!documentType?.[0]?.id) {
+        console.warn("No se encontró documentType válido.");
         return;
       }
 
-      // 4️⃣ Rol superadmin
+      // 5️⃣ Obtener rol superadmin
       const rol = await showRolForName({ name: "superadmin" });
       if (!rol?.id) {
-        console.error("No se encontró el rol superadmin");
+        console.warn("No se encontró rol superadmin.");
         return;
       }
 
-      // 5️⃣ Insertar usuario admin
+      // 6️⃣ Insertar usuario admin
       const paramsUser = {
         id_documenttype: documentType[0].id,
         id_rol: rol.id,
@@ -76,8 +78,8 @@ export const AuthContextProvider = ({ children }) => {
 
       const userResponse = await InsertAdmin(paramsUser);
       console.log("Usuario insertado:", userResponse);
-    } catch (err) {
-      console.error("Error insertando datos:", err);
+    } catch (error) {
+      console.error("Error durante insertData:", error);
     }
   };
 

@@ -4,7 +4,7 @@ import { ConfigsTemplate, Spinner1, useModuleStore } from "../index.js";
 export function Configs() {
   const { showModules } = useModuleStore();
   const { data, isLoading, error } = useQuery({
-    queryKey: "show modules",
+    queryKey: ["show modules"],
     queryFn: showModules,
   });
 

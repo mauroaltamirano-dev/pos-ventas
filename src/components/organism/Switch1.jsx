@@ -2,15 +2,15 @@ import styled from "styled-components";
 export function Switch1({ state, setState }) {
   return (
     <Container>
-      <label class="switch">
+      <label className="switch">
         <input
           checked={state}
-          class="toggle"
+          className="toggle"
           type="checkbox"
           onClick={setState}
         />
-        <span class="slider"></span>
-        <span class="card-side"></span>
+        <span className="slider"></span>
+        <span className="card-side"></span>
       </label>
     </Container>
   );

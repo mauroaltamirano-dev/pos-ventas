@@ -18,7 +18,7 @@ export function MyRoutes() {
   const { users, showUsers } = useUserStore();
   const { showCompany, companyData } = useCompanyStore();
   const { isLoading, error } = useQuery({
-    queryKey: "Show Users",
+    queryKey: ["Show Users"],
     queryFn: showUsers,
     refetchOnWindowFocus: false,
   });
