@@ -1,12 +1,12 @@
 import { create } from "zustand";
-import { getIdUser, showUsers } from "../index.js";
+import { GetIdUser, ShowUsers } from "../index.js";
 
 export const useUserStore = create((set) => ({
   users: [],
   showUsers: async () => {
-    const idAuth = await getIdUser();
+    const idAuth = await GetIdUser();
 
-    const response = await showUsers({ id_auth: idAuth });
+    const response = await ShowUsers({ id_auth: idAuth });
     set({ users: response });
     return response;
   },

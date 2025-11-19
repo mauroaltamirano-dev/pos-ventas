@@ -1,10 +1,9 @@
-/* eslint-disable react-refresh/only-export-components */
 import Swal from "sweetalert2";
 import { supabase } from "../index.js";
 
 const table = "users";
 
-export async function showUsers(p) {
+export async function ShowUsers(p) {
   const { data } = await supabase
     .from(table)
     .select()
@@ -15,21 +14,10 @@ export async function showUsers(p) {
 }
 
 export async function InsertAdmin(p) {
-  const { data, error } = await supabase
-    .from(table)
-    .insert(p)
-    .select("*")
-    .single();
-
-  if (error) {
-    console.error("InsertAdmin error:", error.message);
-    return null;
-  }
-
-  return data;
+  await supabase.from(table).insert(p);
 }
 
-export async function getIdUser() {
+export async function GetIdUser() {
   const {
     data: { session },
   } = await supabase.auth.getSession();

@@ -7,6 +7,7 @@ import {
   ImageContent,
   Icono,
   useProductsStore,
+  Checkbox1,
 } from "../../../index.js";
 import Swal from "sweetalert2";
 import { v } from "../../../styles/variables.jsx";
@@ -74,41 +75,13 @@ export function TableProducts({
 
   const columns = [
     {
-      accessorKey: "icon",
-      header: "Icono",
-      enableSorting: false,
-      cell: (info) => (
-        <td data-title="Color" className="ContentCell">
-          {info.getValue() != "-" ? (
-            <ImageContent image={info.getValue()} />
-          ) : (
-            <Icono>{<v.emptyImgIcon />}</Icono>
-          )}
-        </td>
-      ),
-
-      enableColumnFilter: true,
-      filterFn: (row, columnId, filterStatuses) => {
-        if (filterStatuses.length === 0) return true;
-        const status = row.getValue(columnId);
-        return filterStatuses.includes(status?.id);
-      },
-    },
-    // {
-    //   accessorKey: "id",
-    //   header: "Id",
-    //   cell: (info) => <span>{info.getValue()}</span>,
-    //   enableColumnFilter: true,
-    //   filterFn: (row, columnId, filterStatuses) => {
-    //     if (filterStatuses.length === 0) return true;
-    //     const status = row.getValue(columnId);
-    //     return filterStatuses.includes(status?.id);
-    //   },
-    // },
-    {
       accessorKey: "name",
-      header: "Descripción",
-      cell: (info) => <span>{info.getValue()}</span>,
+      header: "Nombre",
+      cell: (info) => (
+        <div data-title="Nombre" className="ContentCell">
+          <span>{info.getValue()}</span>
+        </div>
+      ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
         if (filterStatuses.length === 0) return true;
@@ -116,17 +89,74 @@ export function TableProducts({
         return filterStatuses.includes(status?.id);
       },
     },
-
     {
-      accessorKey: "color",
-      header: "Color",
-      enableSorting: false,
+      accessorKey: "sale_price",
+      header: "$ Venta",
       cell: (info) => (
-        <td data-title="Color" className="ContentCell">
-          <ColorContent color={info.getValue()} $alto="25px" $ancho="25px" />
-        </td>
+        <div data-title="Precio Venta" className="ContentCell">
+          <span>{info.getValue()}</span>
+        </div>
       ),
-
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
+      accessorKey: "buy_price",
+      header: "$ Compra",
+      cell: (info) => (
+        <div data-title="Precio Compra" className="ContentCell">
+          <span>{info.getValue()}</span>
+        </div>
+      ),
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
+      accessorKey: "internal_code",
+      header: "Cod. Interno",
+      cell: (info) => (
+        <div data-title="Código Interno" className="ContentCell">
+          <span>{info.getValue()}</span>
+        </div>
+      ),
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
+      accessorKey: "for_sale",
+      header: "Tipo de Venta",
+      cell: (info) => (
+        <div data-title="Tipo de Venta" className="ContentCell">
+          <span>{info.getValue()}</span>
+        </div>
+      ),
+      enableColumnFilter: true,
+      filterFn: (row, columnId, filterStatuses) => {
+        if (filterStatuses.length === 0) return true;
+        const status = row.getValue(columnId);
+        return filterStatuses.includes(status?.id);
+      },
+    },
+    {
+      accessorKey: "inventory_manager",
+      header: "Manejo de Inventario",
+      cell: (info) => (
+        <div data-title="Inventario" className="ContentCell">
+          <Checkbox1 isChecked={info.getValue()} />
+        </div>
+      ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
         if (filterStatuses.length === 0) return true;
@@ -136,15 +166,15 @@ export function TableProducts({
     },
     {
       accessorKey: "acciones",
-      header: "",
+      header: "Acción",
       enableSorting: false,
       cell: (info) => (
-        <td data-title="Acciones" className="ContentCell">
+        <div data-title="Acciones" className="ContentCell">
           <ContentActionTable
             functionEdit={() => edit(info.row.original)}
             functionDelete={() => deleteProduct(info.row.original)}
           />
-        </td>
+        </div>
       ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {
@@ -324,6 +354,9 @@ const Container = styled.div`
       }
       tr {
         margin-bottom: 1em;
+        background-color: ${(props) => props.theme.bgCards};
+        border-radius: 1rem;
+        padding: 1rem;
         @media (min-width: ${v.bpbart}) {
           display: table-row;
           border-width: 1px;
@@ -362,12 +395,12 @@ const Container = styled.div`
       td {
         text-align: right;
         @media (min-width: ${v.bpbart}) {
-          /* border-bottom: 1px solid rgba(161, 161, 161, 0.32); */
           text-align: center;
         }
       }
-      td[data-title]:before {
+      div[data-title]:before {
         content: attr(data-title);
+        font-weight: bold;
         float: left;
         font-size: 0.8em;
         @media (min-width: ${v.bplisa}) {
@@ -376,6 +409,10 @@ const Container = styled.div`
         @media (min-width: ${v.bpbart}) {
           content: none;
         }
+      }
+
+      div[data-title="Acciones"] {
+        border-bottom: 0;
       }
     }
   }

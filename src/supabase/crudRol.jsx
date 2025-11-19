@@ -2,7 +2,7 @@ import { supabase } from "../index.js";
 
 const table = "roles";
 
-export async function showRolForName(p) {
+export async function ShowRolForName(p) {
   const { data } = await supabase
     .from(table)
     .select()

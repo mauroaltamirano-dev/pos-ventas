@@ -3,12 +3,13 @@ import {
   Btn1,
   RegisterProducts,
   Search,
-  TableCategorias,
+  TableProducts,
   Title,
+  useCompanyStore,
   useProductsStore,
 } from "../../index.js";
 import { v } from "../../styles/variables";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Confetti from "react-confetti-boom";
 
 export function ProductsTemplate() {
@@ -17,7 +18,14 @@ export function ProductsTemplate() {
   const [dataSelect, setDataSelect] = useState([]);
   const [isExploding, setIsExploding] = useState(false);
 
-  const { productsData, setSearch } = useProductsStore();
+  const { productsData, setSearch, showProducts } = useProductsStore();
+  const { companyData } = useCompanyStore();
+
+  useEffect(() => {
+    if (companyData?.id) {
+      showProducts({ id_company: companyData.id });
+    }
+  }, [companyData?.id]);
 
   function newRegister() {
     setOpenRegister(!openRegister);
@@ -28,12 +36,14 @@ export function ProductsTemplate() {
 
   return (
     <Container>
-      <RegisterProducts
-        setIsExploding={setIsExploding}
-        onClose={() => setOpenRegister(!openRegister)}
-        dataSelect={dataSelect}
-        action={action}
-      />
+      {openRegister && (
+        <RegisterProducts
+          setIsExploding={setIsExploding}
+          onClose={() => setOpenRegister(!openRegister)}
+          dataSelect={dataSelect}
+          action={action}
+        />
+      )}
       <section className="area1">
         <Title>Productos</Title>
         <Btn1
@@ -50,7 +60,7 @@ export function ProductsTemplate() {
 
       <section className="main">
         {isExploding && <Confetti />}
-        <TableCategorias
+        <TableProducts
           setDataSelect={setDataSelect}
           setAction={setAction}
           setOpenRegister={setOpenRegister}

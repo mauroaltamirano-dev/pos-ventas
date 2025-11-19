@@ -78,13 +78,13 @@ export function TableCategorias({
       header: "Icono",
       enableSorting: false,
       cell: (info) => (
-        <td data-title="Color" className="ContentCell">
+        <div data-title="Color" className="ContentCell">
           {info.getValue() != "-" ? (
             <ImageContent image={info.getValue()} />
           ) : (
             <Icono>{<v.emptyImgIcon />}</Icono>
           )}
-        </td>
+        </div>
       ),
 
       enableColumnFilter: true,
@@ -122,9 +122,9 @@ export function TableCategorias({
       header: "Color",
       enableSorting: false,
       cell: (info) => (
-        <td data-title="Color" className="ContentCell">
+        <div data-title="Color" className="ContentCell">
           <ColorContent color={info.getValue()} $alto="25px" $ancho="25px" />
-        </td>
+        </div>
       ),
 
       enableColumnFilter: true,
@@ -139,12 +139,12 @@ export function TableCategorias({
       header: "",
       enableSorting: false,
       cell: (info) => (
-        <td data-title="Acciones" className="ContentCell">
+        <div data-title="Acciones" className="ContentCell">
           <ContentActionTable
             functionEdit={() => edit(info.row.original)}
             functionDelete={() => deleteCategory(info.row.original)}
           />
-        </td>
+        </div>
       ),
       enableColumnFilter: true,
       filterFn: (row, columnId, filterStatuses) => {

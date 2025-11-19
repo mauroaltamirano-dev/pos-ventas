@@ -16,18 +16,13 @@ export const useCategoriesStore = create((set, get) => ({
   setSearch: (p) => set({ search: p }),
 
   showCategories: async (p) => {
-    try {
-      const response = await showCategories(p);
-      set({
-        params: p,
-        dataCategories: response,
-        categoriesItemSelect: response[0] || [],
-      });
-      return response;
-    } catch (err) {
-      console.error("Error al mostrar categorías:", err);
-      return [];
-    }
+    const response = await showCategories(p);
+    set({
+      params: p,
+      dataCategories: response,
+      categoriesItemSelect: response[0] || [],
+    });
+    return response;
   },
 
   selectCategory: (p) => set({ categoriesItemSelect: p }),

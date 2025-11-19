@@ -7,7 +7,7 @@ export function Switch1({ state, setState }) {
           checked={state}
           className="toggle"
           type="checkbox"
-          onClick={setState}
+          onChange={(e) => setState(e.target.checked)}
         />
         <span className="slider"></span>
         <span className="card-side"></span>

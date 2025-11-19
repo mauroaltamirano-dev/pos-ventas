@@ -5,6 +5,7 @@ import {
   DeleteProducts,
   InsertProducts,
   EditProducts,
+  CodeGenerator,
 } from "../index.js";
 
 export const useProductsStore = create((set, get) => ({
@@ -28,11 +29,12 @@ export const useProductsStore = create((set, get) => ({
     set({ productsItemSelect: p });
   },
 
-  insertProducts: async (p, file) => {
-    await InsertProducts(p, file);
+  insertProducts: async (p) => {
+    const response = await InsertProducts(p);
     const { showProducts } = get();
     const { params } = get();
     set(showProducts(params));
+    return response;
   },
 
   deleteProducts: async (p) => {
@@ -53,5 +55,11 @@ export const useProductsStore = create((set, get) => ({
     const response = await FindProducts(p);
     set({ productsData: response });
     return response;
+  },
+
+  generatedCode: 0,
+  codeGeneratorProd: () => {
+    const response = CodeGenerator({ id: 2 });
+    set({ generatedCode: response });
   },
 }));

@@ -9,13 +9,13 @@ export async function ShowBranches(p) {
     .select()
     .eq("id_company", p.id_company);
 
-  if (error) {
-    Swal.fire({
-      icon: "error",
-      title: "Oops...",
-      text: error.message,
-    });
-    return;
-  }
+  // if (error) {
+  //   Swal.fire({
+  //     icon: "error",
+  //     title: "Oops...",
+  //     text: error.message,
+  //   });
+  //   return;
+  // }
   return data;
 }

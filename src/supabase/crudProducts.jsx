@@ -14,15 +14,15 @@ export async function ShowProducts(p) {
 }
 
 export async function InsertProducts(p) {
-  const { data, error } = await supabase
-    .from(table)
-    .insert(p)
-    .select("*")
-    .single();
+  const { data, error } = await supabase.rpc("insertproduct", p);
 
   if (error) {
-    console.error("InsertProduct error:", error.message);
-    return null;
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: error.message,
+    });
+    return;
   }
 
   return data;
