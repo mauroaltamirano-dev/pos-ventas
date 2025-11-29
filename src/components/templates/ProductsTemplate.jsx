@@ -18,7 +18,8 @@ export function ProductsTemplate() {
   const [dataSelect, setDataSelect] = useState([]);
   const [isExploding, setIsExploding] = useState(false);
 
-  const { productsData, setSearch, showProducts } = useProductsStore();
+  const { productsData, setSearch, showProducts, codeGeneratorProd } =
+    useProductsStore();
   const { companyData } = useCompanyStore();
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export function ProductsTemplate() {
     setAction("Nuevo");
     setDataSelect([]);
     setIsExploding(false);
+    codeGeneratorProd();
   }
 
   return (

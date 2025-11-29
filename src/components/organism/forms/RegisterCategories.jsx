@@ -52,7 +52,7 @@ export function RegisterCategories({
     if (action === "Edit") {
       const p = {
         _name: ConverterCapitalize(data.description),
-        _idcompany: companyData.id,
+        _id_company: companyData.id,
         _color: currentColor,
         _id: dataSelect.id,
       };

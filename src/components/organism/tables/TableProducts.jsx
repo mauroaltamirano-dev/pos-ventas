@@ -90,7 +90,7 @@ export function TableProducts({
       },
     },
     {
-      accessorKey: "sale_price",
+      accessorKey: "p_sale",
       header: "$ Venta",
       cell: (info) => (
         <div data-title="Precio Venta" className="ContentCell">
@@ -105,7 +105,7 @@ export function TableProducts({
       },
     },
     {
-      accessorKey: "buy_price",
+      accessorKey: "p_buy",
       header: "$ Compra",
       cell: (info) => (
         <div data-title="Precio Compra" className="ContentCell">
@@ -154,7 +154,7 @@ export function TableProducts({
       header: "Manejo de Inventario",
       cell: (info) => (
         <div data-title="Inventario" className="ContentCell">
-          <Checkbox1 isChecked={info.getValue()} />
+          <Checkbox1 isChecked={info.getValue()} onChange={() => {}} />
         </div>
       ),
       enableColumnFilter: true,

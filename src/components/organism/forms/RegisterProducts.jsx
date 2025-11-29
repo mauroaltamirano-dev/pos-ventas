@@ -18,9 +18,10 @@ import {
   useStoreStore,
 } from "../../../index.js";
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Device } from "../../../styles/breakpoints.jsx";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 export function RegisterProducts({
   onClose,
@@ -30,20 +31,43 @@ export function RegisterProducts({
   state,
 }) {
   const { branchesItemSelect, branches, selectBranch } = useBranchesStore();
-  const { insertProducts, editProducts, generatedCode, codeGeneratorProd } =
-    useProductsStore();
-  const { insertStockStore } = useStoreStore();
+  const {
+    insertProducts,
+    editProducts,
+    generatedCode,
+    codeGeneratorProd,
+    refetchs,
+  } = useProductsStore();
+  const { insertStockStore, showStore, dataStore, deleteStockStore } =
+    useStoreStore();
   const { companyData } = useCompanyStore();
   const { dataCategories, categoriesItemSelect, selectCategory } =
     useCategoriesStore();
 
   const [stateInventory, setStateInventory] = useState(false);
+  const [stateEnabledStock, setStateEnabledStock] = useState(false);
   const [stateBranchesList, setStateBranchesList] = useState(false);
   const [stateListCategories, setStateListCategories] = useState(false);
 
   const [isChecked1, setIsChecked1] = useState(false);
   const [isChecked2, setIsChecked2] = useState(false);
   const [forSale, setForSale] = useState("UNIDAD");
+
+  const [randomInternalCode, setRandomInternalCode] = useState("");
+  const [randomBarCode, setRandomBarCode] = useState("");
+
+  const { data, error, isLoading, refetch } = useQuery({
+    queryKey: [
+      "Show Stock Store for Branch",
+      { id_product: dataSelect.id, id_branch: branchesItemSelect.id },
+    ],
+    queryFn: () => {
+      return showStore({
+        id_branch: branchesItemSelect.id,
+        id_product: dataSelect.id,
+      });
+    },
+  });
 
   const {
     register,
@@ -73,19 +97,40 @@ export function RegisterProducts({
 
     if (action === "Edit") {
       const p = {
-        _name: ConverterCapitalize(data.name),
-        _idcompany: companyData.id,
         _id: dataSelect.id,
+        _name: data.name,
+        _sale_price: parseFloat(data.sale_price),
+        _buy_price: parseFloat(data.buy_price),
+        _id_category: categoriesItemSelect.id,
+        _bar_code: randomBarCode ? randomBarCode : generatedCode,
+        _internal_code: randomInternalCode ? randomInternalCode : generatedCode,
+        _id_company: companyData.id,
+        _for_sale: forSale,
+        _inventory_manager: stateInventory,
       };
       await editProducts(p, dataSelect.icon);
+
+      if (stateInventory) {
+        if (dataStore === null) {
+          const pStore = {
+            id_branch: branchesItemSelect.id,
+            id_product: dataSelect.id,
+            stock: parseFloat(data.stock),
+            min_stock: parseFloat(data.min_stock),
+          };
+          console.log("🚀 ~ total:", pStore);
+
+          await insertStockStore(pStore);
+        }
+      }
     } else {
       const pProduct = {
         _name: data.name,
         _sale_price: parseFloat(data.sale_price),
         _buy_price: parseFloat(data.buy_price),
         _id_category: categoriesItemSelect.id,
-        _bar_code: data.bar_code,
-        _internal_code: data.internal_code,
+        _bar_code: randomBarCode ? randomBarCode : generatedCode,
+        _internal_code: randomInternalCode ? randomInternalCode : generatedCode,
         _id_company: companyData.id,
         _for_sale: forSale,
         _inventory_manager: stateInventory,
@@ -94,16 +139,46 @@ export function RegisterProducts({
       console.log("🚀 ~ total:", pProduct);
 
       const idNewProduct = await insertProducts(pProduct);
+      if (stateInventory) {
+        const pStore = {
+          id_branch: branchesItemSelect.id,
+          id_product: idNewProduct,
+          stock: parseFloat(data.stock),
+          min_stock: parseFloat(data.min_stock),
+        };
+        console.log("🚀 ~ total:", pStore);
 
-      const pStore = {
-        id_branch: branchesItemSelect.id,
-        id_product: idNewProduct,
-        stock: parseFloat(data.stock),
-        min_stock: parseFloat(data.min_stock),
-      };
-      console.log("🚀 ~ total:", pStore);
+        await insertStockStore(pStore);
+      }
+    }
+  }
 
-      await insertStockStore(pStore);
+  function checkUseInventory() {
+    if (action === "Edit") {
+      if (dataStore) {
+        if (stateInventory) {
+          Swal.fire({
+            title: "¿Estás seguro(a)?",
+            text: "Si desactiva esta opción se eliminará el stock!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, eliminar",
+          }).then(async (result) => {
+            if (result.isConfirmed) {
+              setStateInventory(false);
+              await deleteStockStore({ id: dataStore.id });
+            }
+          });
+        } else {
+          setStateInventory(true);
+        }
+      } else {
+        setStateInventory(!stateInventory);
+      }
+    } else {
+      setStateInventory(!stateInventory);
     }
   }
 
@@ -129,24 +204,32 @@ export function RegisterProducts({
     }
   };
 
-  function generateCodeFunction() {
+  function generateInternalCode() {
     codeGeneratorProd();
+    setRandomInternalCode(generatedCode);
     dataSelect.internal_code = generatedCode;
   }
 
   function generateCodeBarcode() {
     codeGeneratorProd();
+    setRandomBarCode(generatedCode);
     dataSelect.bar_code = generatedCode;
   }
 
+  const handleRandomInternalCode = (event) => {
+    setRandomInternalCode(event.target.value);
+  };
+
+  const handleRandomBarcode = (event) => {
+    setRandomBarCode(event.target.value);
+  };
+
   function validateEmpty(data) {
-    if (data.internal_code.trim() === "") {
-      generateCodeFunction();
-      data.internal_code = dataSelect.internal_code;
+    if (!randomInternalCode) {
+      generateInternalCode();
     }
-    if (data.bar_code.trim() === "") {
+    if (!randomBarCode) {
       generateCodeBarcode();
-      data.bar_code = dataSelect.bar_code;
     }
     if (data.sale_price.trim() === "") {
       data.sale_price = 0;
@@ -155,18 +238,30 @@ export function RegisterProducts({
       data.buy_price = 0;
     }
     if (stateInventory) {
-      if (data.stock.trim() === "") {
-        data.stock = 0;
-      }
-      if (data.min_stock.trim() === "") {
-        data.min_stock = 0;
+      if (!dataStore) {
+        if (data.stock.trim() === "") {
+          data.stock = 0;
+        }
+        if (data.min_stock.trim() === "") {
+          data.min_stock = 0;
+        }
       }
     }
   }
 
   useEffect(() => {
     if (action != "Edit") {
-      generateCodeFunction();
+      generateInternalCode();
+    } else {
+      setRandomInternalCode(dataSelect.internal_code);
+      setRandomBarCode(dataSelect.bar_code);
+      dataSelect.for_sale === "UNIDAD" ? toggleChecked(1) : toggleChecked(0);
+      dataSelect.inventory_manager
+        ? setStateInventory(true)
+        : setStateInventory(false);
+      dataSelect.inventory_manager
+        ? setStateEnabledStock(true)
+        : setStateEnabledStock(false);
     }
   }, []);
 
@@ -186,7 +281,14 @@ export function RegisterProducts({
             </section>
 
             <section>
-              <span onClick={onClose}>x</span>
+              <span
+                onClick={() => {
+                  refetchs();
+                  onClose();
+                }}
+              >
+                x
+              </span>
             </section>
           </div>
 
@@ -239,10 +341,11 @@ export function RegisterProducts({
                   <input
                     step="1"
                     className="form__field"
-                    defaultValue={dataSelect.bar_code}
+                    value={randomBarCode}
                     type="text"
                     placeholder="Código de barra"
-                    {...register("bar_code")}
+                    onChange={handleRandomBarcode}
+                    // {...register("bar_code")}
                   />
                   <label className="form__label">Código de barra</label>
                 </InputText>
@@ -253,17 +356,18 @@ export function RegisterProducts({
               <article className="contentFatherGenerate">
                 <InputText icono={<v.arrowRightIcon />}>
                   <input
+                    onChange={handleRandomInternalCode}
                     step="1"
                     className="form__field"
-                    defaultValue={dataSelect.internal_code}
+                    value={randomInternalCode}
                     type="text"
                     placeholder="Código de interno"
-                    {...register("internal_code")}
+                    // {...register("internal_code")}
                   />
                   <label className="form__label">Código interno</label>
                 </InputText>
                 <ContainerBtnGenerate>
-                  <BtnSpan title={"Generar"} func={generateCodeFunction} />
+                  <BtnSpan title={"Generar"} func={generateInternalCode} />
                 </ContainerBtnGenerate>
               </article>
             </section>
@@ -301,7 +405,7 @@ export function RegisterProducts({
               </ContainerSelector>
               <ContainerSelector>
                 <label>Controlar Stock: </label>
-                <Switch1 state={stateInventory} setState={setStateInventory} />
+                <Switch1 state={stateInventory} setState={checkUseInventory} />
               </ContainerSelector>
               {stateInventory && (
                 <ContainerStock>
@@ -315,6 +419,7 @@ export function RegisterProducts({
                       state={stateBranchesList}
                     />
                     <ListSelect
+                      refetch={refetch}
                       data={branches}
                       top={"4rem"}
                       setState={toggleBranchesList}
@@ -322,11 +427,19 @@ export function RegisterProducts({
                       state={stateBranchesList}
                     />
                   </ContainerSelector>
+                  {stateEnabledStock && (
+                    <ContainerInputStock>
+                      <span>
+                        Para editar el stock, debe hacerlo desde el KARDEX.
+                      </span>
+                    </ContainerInputStock>
+                  )}
                   <article>
                     <InputText icono={<v.arrowRightIcon />}>
                       <input
+                        disabled={stateEnabledStock}
                         className="form__field"
-                        defaultValue={dataSelect.stock}
+                        defaultValue={dataStore?.stock}
                         step="0.01"
                         type="number"
                         placeholder="Stock"
@@ -338,8 +451,9 @@ export function RegisterProducts({
                   <article>
                     <InputText icono={<v.arrowRightIcon />}>
                       <input
+                        disabled={stateEnabledStock}
                         className="form__field"
-                        defaultValue={dataSelect.min_stock}
+                        defaultValue={dataStore?.min_stock}
                         step="0.01"
                         type="number"
                         placeholder="Stock mínimo"
@@ -439,6 +553,15 @@ const ContainerBtnGenerate = styled.div`
   position: absolute;
   right: 0;
   top: 10%;
+`;
+
+const ContainerInputStock = styled.div`
+  text-align: center;
+  color: #f9184c;
+  background-color: rgba(249, 21, 35, 0.2);
+  border-radius: 10px;
+  padding: 5px;
+  margin: 10px;
 `;
 
 const ContentTitle = styled.div`

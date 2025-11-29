@@ -63,6 +63,14 @@ const Container = styled.div`
   padding: 0 20px;
   color: ${({ theme }) => theme.text};
 
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+
   .card {
     display: flex;
     flex-direction: column;

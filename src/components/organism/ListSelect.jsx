@@ -1,9 +1,21 @@
 import styled from "styled-components";
 import { Device } from "../../styles/breakpoints";
 
-export function ListSelect({ data, setState, func, scroll, top, state }) {
+export function ListSelect({
+  data,
+  setState,
+  func,
+  scroll,
+  top,
+  state,
+  refetch,
+}) {
   if (!state) return;
   function selection(p) {
+    if (refetch) {
+      refetch();
+    }
+
     func(p);
     setState();
   }
@@ -33,7 +45,7 @@ const Container = styled.div`
   position: absolute;
   margin-bottom: 15px;
   top: ${(props) => props.$top};
-  width: 100%;
+  width: 95%;
   padding: 10px;
   border-radius: 10px;
   gap: 10px;

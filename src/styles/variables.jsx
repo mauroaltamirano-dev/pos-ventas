@@ -15,6 +15,7 @@ import { BsArrowDown, BsArrowUpShort } from "react-icons/bs";
 import { FaBalanceScale } from "react-icons/fa";
 import logo from "../assets/isotipo.webp";
 import logoWhite from "../assets/isotipoWhite.webp";
+import signopeso from "../assets/signopeso.png";
 import { FcGoogle } from "react-icons/fc";
 
 import { RiCloseLine } from "react-icons/ri";
@@ -86,6 +87,8 @@ export const v = {
   editTableIcon: RiEditLine,
   deleteTableIcon: RiDeleteBin2Line,
   homeIcon: TbBrandSupabase,
+
+  signopeso: signopeso,
 
   incomeColor: `#53B257`,
   incomeBgColor: `#e6ffe7`,

@@ -10,20 +10,23 @@ import {
 } from "../index.js";
 
 export function Products() {
-  const { showProducts, findProducts, search } = useProductsStore();
+  const { showProducts, searchProducts, searcher, setRefetch } =
+    useProductsStore();
   const { showBranches } = useBranchesStore();
   const { companyData } = useCompanyStore();
   const { showCategories } = useCategoriesStore();
-  const { isLoading, error } = useQuery({
+  const { isLoading, error, refetch } = useQuery({
     queryKey: ["Mostrar productos", companyData?.id],
-    queryFn: () => showProducts({ id_company: companyData?.id }),
+    queryFn: () =>
+      showProducts({ id_company: companyData?.id, refetchs: refetch }),
     enabled: !!companyData,
     refetchOnWindowFocus: false,
   });
 
   const {} = useQuery({
-    queryKey: ["Buscar Productos", search],
-    queryFn: () => findProducts({ id_company: companyData?.id, name: search }),
+    queryKey: ["Buscar Productos", searcher],
+    queryFn: () =>
+      searchProducts({ id_company: companyData?.id, searcher: searcher }),
     enabled: !!companyData,
     refetchOnWindowFocus: false,
   });

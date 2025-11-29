@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import {
-  FindProducts,
+  SearchProducts,
   ShowProducts,
   DeleteProducts,
   InsertProducts,
@@ -9,19 +9,26 @@ import {
 } from "../index.js";
 
 export const useProductsStore = create((set, get) => ({
-  search: "",
+  refetchs: null,
+
+  searcher: "",
   setSearch: (p) => {
-    set({ search: p });
+    set({ searcher: p });
   },
+
   productsData: [],
   productsItemSelect: [],
   params: {},
 
   showProducts: async (p) => {
+    console.log("LLEGA refetchs:", p.refetchs);
     const response = await ShowProducts(p);
     set({ params: p });
     set({ productsData: response });
     set({ productsItemSelect: response[0] });
+    if (typeof p.refetchs === "function") {
+      set({ refetchs: p.refetchs });
+    }
     return response;
   },
 
@@ -51,8 +58,8 @@ export const useProductsStore = create((set, get) => ({
     set(showProducts(params));
   },
 
-  findProducts: async (p) => {
-    const response = await FindProducts(p);
+  searchProducts: async (p) => {
+    const response = await SearchProducts(p);
     set({ productsData: response });
     return response;
   },

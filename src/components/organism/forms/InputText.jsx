@@ -92,4 +92,11 @@ const Container = styled.div`
   .form__field:invalid {
     box-shadow: none;
   }
+
+  input:disabled {
+    color: #696969;
+    border-radius: 8px;
+    margin-top: 8px;
+    border-bottom: 1px dashed #656565;
+  }
 `;
