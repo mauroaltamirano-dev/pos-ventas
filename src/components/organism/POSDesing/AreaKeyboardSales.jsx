@@ -1,14 +1,23 @@
 import styled from "styled-components";
 import { Btn1 } from "../../molecules/Btn1";
-import { TotalSales } from "../../../index.js";
+import {
+  FormatNumber,
+  TotalSales,
+  useCompanyStore,
+  useSalesCartStore,
+} from "../../../index.js";
 import { Device } from "../../../styles/breakpoints.jsx";
 
 export function AreaKeyboardSales() {
+  const { total, subtotal, setStatePayment } = useSalesCartStore();
+  const { companyData } = useCompanyStore();
+
   return (
     <AreaKeyboard>
       <section className="areaTypePayment">
         <article className="box">
           <Btn1
+            func={() => setStatePayment({ typePayment: "EFECTIVO" })}
             title={"EFECTIVO"}
             border={"0"}
             height={"70px"}
@@ -17,6 +26,7 @@ export function AreaKeyboardSales() {
             color={"#fff"}
           />
           <Btn1
+            func={() => setStatePayment({ typePayment: "DÉBITO" })}
             title={"DÉBITO"}
             border={"0"}
             width={"100%"}
@@ -26,6 +36,7 @@ export function AreaKeyboardSales() {
         </article>
         <article className="box">
           <Btn1
+            func={() => setStatePayment({ typePayment: "CRÉDITO" })}
             title={"CRÉDITO"}
             border={"0"}
             height={"70px"}
@@ -34,6 +45,7 @@ export function AreaKeyboardSales() {
             color={"#fff"}
           />
           <Btn1
+            func={() => setStatePayment({ typePayment: "MIXTO" })}
             title={"MIXTO"}
             border={"0"}
             width={"100%"}
@@ -46,13 +58,24 @@ export function AreaKeyboardSales() {
       <section className="prices">
         <div className="subtotal">
           <span>
-            Subtotal <strong>$10.000</strong>
+            Subtotal{" "}
+            <strong>
+              {FormatNumber(
+                total - (total * companyData?.value_tax) / 100,
+                companyData?.currency,
+                companyData?.iso,
+                2
+              )}
+            </strong>
           </span>
           <span>
-            IIBB (3%): <strong>$0.000</strong>
+            {companyData?.tax}: <strong>{companyData?.value_tax}%</strong>
           </span>
           <span>
-            Total: <strong>$10.000</strong>
+            Total:{" "}
+            <strong>
+              {FormatNumber(total, companyData?.currency, companyData?.iso, 2)}
+            </strong>
           </span>
         </div>
         <TotalSales />

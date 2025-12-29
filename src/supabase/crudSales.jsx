@@ -19,36 +19,38 @@ export async function InsertSales(p) {
     return;
   }
 
+  console.log("RESULT INSERT SALES:", data, error);
+
   return data;
 }
 
-// export async function ShowProducts(p) {
-//   const { data } = await supabase.rpc("showproducts", {
-//     _id_company: p.id_company,
-//   });
-//   return data;
-// }
+export async function DeleteSalesUncompleted(p) {
+  const { error } = await supabase
+    .from(table)
+    .delete()
+    .eq("state", "NEW")
+    .eq("id_user", p.id_user);
 
-// export async function SearchProducts(p) {
-//   const { data } = await supabase.rpc("searchproduct", {
-//     _id_company: p.id_company,
-//     searcher: p.searcher,
-//   });
-//   return data;
-// }
+  if (error) {
+    Swal.fire({
+      icon: "error",
+      title: "Oops...",
+      text: error.message,
+    });
+    return;
+  }
+}
 
-// export async function DeleteProducts(p) {
-//   const { error } = await supabase.from(table).delete().eq("id", p.id);
+export async function ShowSalesForBranch(p) {
+  const { data } = await supabase
+    .from(table)
+    .select()
+    .eq("id_branch", p.id_branch)
+    .eq("state", "NEW")
+    .maybeSingle();
 
-//   if (error) {
-//     Swal.fire({
-//       icon: "error",
-//       title: "Oops...",
-//       text: error.message,
-//     });
-//     return;
-//   }
-// }
+  return data;
+}
 
 // export async function EditUseInventoryProducts(p) {
 //   const { error } = await supabase.from(table).update(p).eq("id", p.id);

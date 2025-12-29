@@ -13,8 +13,8 @@ import { SiSupabase } from "react-icons/si";
 import { FaReact } from "react-icons/fa";
 import { BsArrowDown, BsArrowUpShort } from "react-icons/bs";
 import { FaBalanceScale } from "react-icons/fa";
-import logo from "../assets/isotipo.webp";
-import logoWhite from "../assets/isotipoWhite.webp";
+import logo from "../assets/logo.png";
+import logoWhite from "../assets/logo.png";
 import signopeso from "../assets/signopeso.png";
 import { FcGoogle } from "react-icons/fc";
 

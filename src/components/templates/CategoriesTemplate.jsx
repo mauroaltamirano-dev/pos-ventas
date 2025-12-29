@@ -10,6 +10,7 @@ import {
 import { v } from "../../styles/variables";
 import { useState } from "react";
 import Confetti from "react-confetti-boom";
+import { useLocation } from "react-router-dom";
 
 export function CategoriesTemplate() {
   const [openRegister, setOpenRegister] = useState(false);
@@ -18,6 +19,8 @@ export function CategoriesTemplate() {
   const [isExploding, setIsExploding] = useState(false);
 
   const { dataCategories, setSearch } = useCategoriesStore();
+
+  const location = useLocation();
 
   function newRegister() {
     setOpenRegister(!openRegister);
@@ -37,7 +40,11 @@ export function CategoriesTemplate() {
         />
       )}
       <section className="area1">
-        <Title>Categorías</Title>
+        <Title>
+          {location.pathname === "/configs/categories"
+            ? "Categorías"
+            : "Categorías"}
+        </Title>
         <Btn1
           func={newRegister}
           bgColor={v.mainColor}

@@ -32,8 +32,4 @@ const Container = styled.div`
     transition: 0.3s;
     transform: rotate(180deg);
   }
-  &:hover {
-    background-color: ${(props) => props.color};
-    color: #fff;
-  }
 `;

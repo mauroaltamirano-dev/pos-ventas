@@ -9,7 +9,7 @@ export function ContentActionTable({ functionEdit, functionDelete }) {
     <Container>
       <ActionTable
         func={functionEdit}
-        fontSize="18px"
+        fontSize="24px"
         color="#7d7d7d"
         icon={<v.editTableIcon />}
       />
@@ -17,7 +17,7 @@ export function ContentActionTable({ functionEdit, functionDelete }) {
         func={functionDelete}
         fontSize="20px"
         color="#f76e8e"
-        icon={<Icon icon="fluent-emoji-high-contrast:skull" />}
+        icon={<Icon icon="meteor-icons:trash-can" width="24" height="24" />}
       />
     </Container>
   );

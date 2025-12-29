@@ -4,15 +4,24 @@ import {
   ShowStockStoreForBranch,
   DeleteStockStore,
   EditUseInventoryProducts,
+  ShowStoreForBranch,
 } from "../index.js";
 
-export const useStoreStore = create((set) => ({
+export const useStoreStore = create((set, get) => ({
   dataStore: [],
+  dataStoreForBranchForProduct: [],
 
   showStore: async (p) => {
     const response = await ShowStockStoreForBranch(p);
     set({ dataStore: response });
     return response;
+  },
+
+  showStoreForBranch: async (p) => {
+    const response = await ShowStoreForBranch(p);
+    set({ dataStoreForBranchForProduct: response });
+    const { dataStoreForBranchForProduct } = get();
+    return dataStoreForBranchForProduct;
   },
 
   insertStockStore: async (p) => {

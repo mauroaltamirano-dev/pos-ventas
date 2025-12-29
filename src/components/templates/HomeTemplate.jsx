@@ -1,16 +1,10 @@
 import styled from "styled-components";
-import { useAuthStore } from "../../store/AuthStore";
-import { UserAuth } from "../../context/AuthContext";
+import { Welcome } from "../../index.js";
 
 export function HomeTemplate() {
-  const { logoutSession } = useAuthStore();
-  const { user } = UserAuth();
-
   return (
     <Container>
-      <span>HomeTemplate</span>
-      <button onClick={logoutSession}>Cerrar Sesión</button>
-      <span>{user.email}</span>
+      <Welcome />
     </Container>
   );
 }

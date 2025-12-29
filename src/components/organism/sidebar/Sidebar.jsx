@@ -89,12 +89,12 @@ const Container = styled.div`
   position: fixed;
   height: 100%;
   padding-top: 20px;
-  z-index: 2;
+  z-index: 100;
   width: 88px;
   transition: 0.1s ease-in-out;
   overflow-y: auto;
   overflow-x: hidden;
-  border-right: 2px solid ${({ theme }) => theme.color2};
+  border-right: 2px solid ${({ theme }) => theme.border};
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -225,15 +225,16 @@ const Main = styled.div`
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: ${(props) => props.theme.bgTgDerecha};
-    box-shadow: 0 0 4px ${(props) => props.theme.bg3},
+    background: ${(props) => props.theme.bgTgRight};
+    box-shadow:
+      0 0 4px ${(props) => props.theme.bg3},
       0 0 7px ${(props) => props.theme.bg};
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
-    z-index: 3;
+    z-index: 101;
     transform: ${({ $isopen }) =>
       $isopen === "true" ? `translateX(173px) rotate(3.142rad)` : `initial`};
     color: ${(props) => props.theme.text};

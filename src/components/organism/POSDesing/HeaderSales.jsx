@@ -4,25 +4,25 @@ import {
   InputText2,
   ListSelect,
   Reloj,
-  useCompanyStore,
+  useBranchesStore,
   useProductsStore,
-  useUserStore,
+  useSalesCartStore,
 } from "../../../index.js";
 import { v } from "../../../styles/variables.jsx";
 import { Device } from "../../../styles/breakpoints.jsx";
 import { Icon } from "@iconify/react";
 import { useEffect, useRef, useState } from "react";
-import { useSalesStore } from "../../../store/SalesStore.jsx";
 
 export function HeaderSales() {
   const [stateListProducts, setStateListProducts] = useState(false);
   const [stateScanner, setStateScanner] = useState(true);
   const [stateKeyboard, setStateKeyboard] = useState(false);
 
-  const { insertSales } = useSalesStore();
-  const { setSearch, productsData, selectProducts } = useProductsStore();
-  const { users } = useUserStore();
-  const { companyData } = useCompanyStore();
+  const { searcher, setSearch, productsData, selectProducts } =
+    useProductsStore();
+  const { branchesItemSelectAssigns } = useBranchesStore();
+  const { addItem } = useSalesCartStore();
+
   const inputRef = useRef(null);
 
   function focusClick() {
@@ -44,12 +44,24 @@ export function HeaderSales() {
   }
 
   async function insertingSale() {
-    selectProducts();
-    const pSale = {
-      id_user: users.id,
-      id_company: companyData.id,
+    const productItemSelect = useProductsStore.getState().productsItemSelect;
+
+    console.log(productItemSelect);
+
+    const pDetailsSale = {
+      _id_sale: 1,
+      _sale_price: productItemSelect.sale_price,
+      _quantity: 1,
+      _total: productItemSelect.total,
+      _desc: productItemSelect.name,
+      _id_product: productItemSelect.id,
+      _buy_price: productItemSelect.buy_price,
+      _id_branch: branchesItemSelectAssigns.id_branch,
     };
-    await insertSales(pSale);
+
+    addItem(pDetailsSale);
+    setSearch("");
+    inputRef.current.focus();
   }
 
   useEffect(() => {
@@ -58,6 +70,9 @@ export function HeaderSales() {
 
   return (
     <Header>
+      <ContentBranch>
+        <strong>SUCURSAL: </strong> {branchesItemSelectAssigns.name_branch}
+      </ContentBranch>
       <section className="contentMain">
         <ContentUser>
           <div className="contentImg">
@@ -68,10 +83,10 @@ export function HeaderSales() {
             <span className="role">Admin</span>
           </div>
         </ContentUser>
-        {/* <article className="contentLogo">
+        <article className="contentLogo">
           <img src={v.logo} />
           <span>Mauro Altamirano - Dev</span>
-        </article> */}
+        </article>
         <article className="contentDate">
           <Reloj />
         </article>
@@ -82,16 +97,18 @@ export function HeaderSales() {
           <InputText2>
             <input
               className="form__field"
-              type="text"
+              type="search"
               placeholder="Buscar producto..."
               onChange={searchProducts}
               ref={inputRef}
+              value={searcher}
             />
             <ListSelect
+              func={selectProducts}
+              setState={() => setStateListProducts(!stateListProducts)}
               state={stateListProducts}
               data={productsData}
-              setState={() => setStateListProducts(!stateListProducts)}
-              func={insertingSale}
+              functionCrud={insertingSale}
             />
           </InputText2>
         </article>
@@ -144,11 +161,10 @@ const Header = styled.div`
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 
   @media ${Device.desktop} {
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
-    height: 80px;
   }
 
   .contentMain {
@@ -158,8 +174,8 @@ const Header = styled.div`
     width: 100%;
 
     @media ${Device.desktop} {
-      width: auto;
       gap: 40px;
+      margin: 20px 0;
     }
 
     .contentLogo {
@@ -190,13 +206,22 @@ const Header = styled.div`
   .contentSearch {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
     width: 100%;
 
     @media ${Device.desktop} {
       flex-direction: row;
       width: auto;
       align-items: center;
+      gap: 10px;
+    }
+
+    .form__field {
+      color: ${({ theme }) => theme.textInput};
+    }
+
+    .form__field:placeholder-shown {
+      color: ${({ theme }) => theme.textInput};
     }
 
     .search-box {
@@ -255,7 +280,7 @@ const ContentUser = styled.div`
     .user {
       font-weight: 700;
       font-size: 16px;
-      color: ${({ theme }) => theme.text || "#333"};
+      color: ${({ theme }) => theme.text};
     }
     .role {
       font-size: 12px;
@@ -263,4 +288,16 @@ const ContentUser = styled.div`
       font-weight: 500;
     }
   }
+`;
+
+const ContentBranch = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  border-bottom: 2px solid ${({ theme }) => theme.border};
 `;

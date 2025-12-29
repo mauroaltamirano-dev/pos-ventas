@@ -1,90 +1,105 @@
 import styled from "styled-components";
 import { Device } from "../../../styles/breakpoints";
+import {
+  EmptyState,
+  FormatNumber,
+  useCompanyStore,
+  useDetailsSalesStore,
+  useSalesCartStore,
+  useSalesStore,
+} from "../../../index.js";
+import { useQuery } from "@tanstack/react-query";
+import { blurIn } from "../../../styles/keyframes.jsx";
+import { Icon } from "@iconify/react";
+import EmptyCart from "../../../assets/Empty Cart.json";
 
 export function AreaDetailsSales() {
-  // Mock data for visualization
-  const products = [
-    {
-      id: 1,
-      description: "Coca Cola 2.25L",
-      stock: 34,
-      qty: 1,
-      price: 3500,
-      total: 3500,
-    },
-    {
-      id: 2,
-      description: "Galletitas Oreo 117g",
-      stock: 12,
-      qty: 2,
-      price: 1200,
-      total: 2400,
-    },
-    {
-      id: 3,
-      description: "Pan Lactal Blanco",
-      stock: 5,
-      qty: 1,
-      price: 2800,
-      total: 2800,
-    },
-    {
-      id: 4,
-      description: "Leche La Serenísima 1L",
-      stock: 20,
-      qty: 3,
-      price: 1500,
-      total: 4500,
-    },
-    {
-      id: 5,
-      description: "Cerveza Quilmes 473ml",
-      stock: 48,
-      qty: 6,
-      price: 1100,
-      total: 6600,
-    },
-    {
-      id: 6,
-      description: "Papas Lays Clásicas",
-      stock: 15,
-      qty: 1,
-      price: 2100,
-      total: 2100,
-    },
-    {
-      id: 7,
-      description: "Agua Mineral Villavicencio",
-      stock: 30,
-      qty: 2,
-      price: 900,
-      total: 1800,
-    },
-  ];
+  const { showDetailsSales } = useDetailsSalesStore();
+  const { idSale } = useSalesStore();
+  const { items, addQuantityItem, removeQuantityItem, removeItem, total } =
+    useSalesCartStore();
+  const { companyData } = useCompanyStore();
+
+  useQuery({
+    queryKey: ["dataDetailsSale", idSale],
+    queryFn: () => showDetailsSales({ id_sale: idSale }),
+    enabled: idSale > 0,
+  });
+
+  const isEmpty = items.length === 0;
 
   return (
     <AreaDetails>
       <HeaderList>
-        <span>Descripción</span>
+        <span className="description">Descripción</span>
         <span className="center">Cant.</span>
         <span className="end">Total</span>
       </HeaderList>
+
       <ScrollContainer>
-        {products.map((product) => (
-          <ItemSale key={product.id}>
-            <div className="product-info">
-              <span className="description">{product.description}</span>
-              <span className="stock">Stock: {product.stock} u.</span>
-            </div>
-            <div className="product-details">
-              <div className="qty-price">
-                <span className="qty">x{product.qty}</span>
-                <span className="price">${product.price}</span>
+        {isEmpty ? (
+          <EmptyState animation={EmptyCart} text="Carrito vacío" />
+        ) : (
+          items.map((item, index) => (
+            <ItemSale key={item._id_product ?? index}>
+              <div className="col-desc">
+                <span className="name">{item._desc}</span>
+                <span className="unit-price">
+                  Precio sin impuestos:{" "}
+                  {FormatNumber(
+                    item._sale_price -
+                      (item._sale_price * companyData?.value_tax) / 100,
+                    companyData?.currency,
+                    companyData?.iso,
+                    2
+                  )}
+                </span>
+                <span className="unit-price">
+                  Precio con impuestos:{" "}
+                  {FormatNumber(
+                    item._sale_price,
+                    companyData?.currency,
+                    companyData?.iso,
+                    2
+                  )}
+                </span>
               </div>
-              <span className="total">${product.total}</span>
-            </div>
-          </ItemSale>
-        ))}
+
+              <div className="col-qty">
+                <button
+                  className="btn-qty minus"
+                  onClick={() => removeQuantityItem(item)}
+                >
+                  <Icon icon="tabler:minus" />
+                </button>
+
+                <span className="qty-value">{item._quantity}</span>
+
+                <button
+                  className="btn-qty plus"
+                  onClick={() => addQuantityItem(item)}
+                >
+                  <Icon icon="tabler:plus" />
+                </button>
+              </div>
+
+              <div className="col-total">
+                <span className="total-price">
+                  {FormatNumber(
+                    item._sale_price * item._quantity,
+                    companyData?.currency,
+                    companyData?.iso,
+                    2
+                  )}
+                </span>
+
+                <button className="btn-delete" onClick={() => removeItem(item)}>
+                  <Icon icon="ic:sharp-delete-forever" width={22} height={22} />
+                </button>
+              </div>
+            </ItemSale>
+          ))
+        )}
       </ScrollContainer>
     </AreaDetails>
   );
@@ -104,21 +119,27 @@ const AreaDetails = styled.section`
 
 const HeaderList = styled.div`
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   padding: 15px 20px;
   background: ${({ theme }) => theme.bg3 || "#f5f5f5"};
   font-weight: 700;
   color: ${({ theme }) => theme.text || "#333"};
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 
-  span {
-    flex: 1;
+  .description {
+    flex: 2;
+    text-align: left;
   }
   .center {
+    flex: 1;
     text-align: center;
   }
   .end {
-    text-align: end;
+    flex: 1;
+    text-align: right;
   }
 `;
 
@@ -141,75 +162,132 @@ const ScrollContainer = styled.div`
 
 const ItemSale = styled.article`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 15px;
+  padding: 12px 15px;
   background: ${({ theme }) => theme.bg2 || "#fff"};
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   transition: all 0.2s ease;
-  border-left: 4px solid transparent;
+  border: 1px solid transparent;
+  animation: ${blurIn} 0.4s ease-in-out;
+  gap: 10px;
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-    border-left: 4px solid ${({ theme }) => theme.primary || "#33b81c"};
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    border-color: ${({ theme }) => theme.primary || "#33b81c"};
   }
 
-  .product-info {
+  .col-desc {
+    flex: 2;
     display: flex;
     flex-direction: column;
     gap: 4px;
-    flex: 2;
+    overflow: hidden;
 
-    .description {
-      font-size: 16px;
+    .name {
+      font-size: 15px;
       font-weight: 600;
       color: ${({ theme }) => theme.text || "#333"};
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
-    .stock {
+    .unit-price {
       font-size: 12px;
       color: #888;
+      font-weight: 500;
     }
   }
 
-  .product-details {
+  .col-qty {
+    flex: 1;
     display: flex;
     align-items: center;
-    gap: 20px;
-    flex: 1;
-    justify-content: flex-end;
+    justify-content: center;
+    gap: 8px;
 
-    .qty-price {
+    .btn-qty {
       display: flex;
-      flex-direction: column;
-      align-items: flex-end;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: ${({ theme }) => theme.bg3 || "#f0f0f0"};
+      color: ${({ theme }) => theme.text || "#333"};
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 14px;
 
-      .qty {
-        font-weight: 700;
-        color: ${({ theme }) => theme.primary || "#33b81c"};
+      &:hover {
+        background: ${({ theme }) => theme.primary || "#33b81c"};
+        color: #fff;
+        transform: scale(1.05);
       }
-      .price {
-        font-size: 12px;
-        color: #888;
+      &:active {
+        transform: scale(0.95);
       }
     }
 
-    .total {
-      font-size: 18px;
-      font-weight: 800;
+    .qty-value {
+      font-weight: 700;
+      font-size: 15px;
       color: ${({ theme }) => theme.text || "#333"};
-      min-width: 80px;
-      text-align: right;
+      min-width: 24px;
+      text-align: center;
+    }
+  }
+
+  .col-total {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+
+    .total-price {
+      font-size: 16px;
+      font-weight: 700;
+      color: ${({ theme }) => theme.primary || "#33b81c"};
+    }
+
+    .btn-delete {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: #ff4d4f;
+      padding: 6px;
+      border-radius: 50%;
+      transition: all 0.2s;
+      opacity: 0.7;
+
+      &:hover {
+        background: #fff1f0;
+        opacity: 1;
+        transform: scale(1.1);
+      }
     }
   }
 
   @media ${Device.mobile} {
-    .product-details {
-      gap: 10px;
-      .total {
-        font-size: 16px;
+    padding: 10px;
+    .col-desc .name {
+      font-size: 14px;
+    }
+    .col-qty {
+      gap: 4px;
+      .btn-qty {
+        width: 24px;
+        height: 24px;
       }
+    }
+    .col-total .total-price {
+      font-size: 14px;
     }
   }
 `;

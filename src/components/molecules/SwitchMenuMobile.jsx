@@ -1,10 +1,15 @@
 import styled from "styled-components";
 
-export function SwitchMenuMobile() {
+export function SwitchMenuMobile({ state, setstate }) {
   return (
     <Container id="menuToggle">
-      <input id="checkbox" type="checkbox" />
-      <label className="toggle" htmlFor="checkbox">
+      <input
+        id="checkbox"
+        type="checkbox"
+        checked={state}
+        onChange={setstate}
+      />
+      <label className={state ? "toggle active" : "toggle"} htmlFor="checkbox">
         <div className="bar bar--top"></div>
         <div className="bar bar--middle"></div>
         <div className="bar bar--bottom"></div>

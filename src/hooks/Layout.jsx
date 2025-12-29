@@ -5,6 +5,8 @@ import {
   SwitchMenuMobile,
   useCompanyStore,
   useUserStore,
+  MenuMobile,
+  useBranchesStore,
 } from "../index.js";
 import { Device } from "../styles/breakpoints.jsx";
 import { useState } from "react";
@@ -12,19 +14,38 @@ import { useQuery } from "@tanstack/react-query";
 
 export function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [stateMenu, setStateMenu] = useState(false);
+
   const { users, showUsers } = useUserStore();
   const { showCompany } = useCompanyStore();
-  const { isLoading, error } = useQuery({
+  const { showBranchAssigns } = useBranchesStore();
+
+  const {
+    isLoading,
+    error,
+    refetch: refetchUsers,
+  } = useQuery({
     queryKey: ["Show Users"],
     queryFn: showUsers,
     refetchOnWindowFocus: false,
+    retryDelay: 1000,
   });
+
+  useQuery({
+    queryKey: ["Show Branch Assigns", users?.id],
+    queryFn: () => showBranchAssigns({ id_user: users?.id }),
+    enabled: !!users,
+    refetchOnWindowFocus: false,
+  });
+
   useQuery({
     queryKey: ["Show Company", users?.id],
     queryFn: () => showCompany({ _id_user: users?.id }),
     enabled: !!users,
     refetchOnWindowFocus: false,
   });
+
+  if (users === null) refetchUsers();
 
   if (isLoading) return <Spinner1 />;
 
@@ -41,7 +62,16 @@ export function Layout({ children }) {
         />
       </section>
       <section className="contentMenuMobile">
-        <SwitchMenuMobile />
+        <SwitchMenuMobile
+          state={stateMenu}
+          setstate={() => setStateMenu(!stateMenu)}
+        />
+        {stateMenu && (
+          <MenuMobile
+            isOpen={stateMenu}
+            setState={() => setStateMenu(!stateMenu)}
+          />
+        )}
       </section>
       <ContainerBody>{children}</ContainerBody>
     </Container>

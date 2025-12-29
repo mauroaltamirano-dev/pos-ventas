@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Device } from "../../styles/breakpoints";
+import { useEffect, useRef, useState } from "react";
 
 export function ListSelect({
   data,
@@ -9,25 +10,67 @@ export function ListSelect({
   top,
   state,
   refetch,
+  functionCrud,
 }) {
   if (!state) return;
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const dropDownRef = useRef(null);
+
   function selection(p) {
     if (refetch) {
       refetch();
     }
 
-    func(p);
+    func(p); // selectProducts
+
+    if (functionCrud) {
+      functionCrud(p); // <-- le pasamos el PRODUCTO REAL
+    }
+
     setState();
   }
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      selection(data[selectedIndex]);
+    } else if (e.key === "ArrowUp") {
+      setSelectedIndex((prevIndex) =>
+        prevIndex === 0 ? data.length - 1 : prevIndex - 1
+      );
+    } else if (e.key === "ArrowDown") {
+      setSelectedIndex((prevIndex) =>
+        prevIndex === 0 ? data.length - 1 : prevIndex + 1
+      );
+    }
+  };
+
+  useEffect(() => {
+    dropDownRef.current.focus();
+  }, []);
+
   return (
-    <Container scroll={scroll} $top={top}>
+    <Container
+      scroll={scroll}
+      $top={top}
+      ref={dropDownRef}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+    >
       <section className="contentClose" onClick={setState}>
         x
       </section>
       <section className="contentItems">
         {data?.map((item, index) => {
           return (
-            <ItemContainer key={index} onClick={() => selection(item)}>
+            <ItemContainer
+              key={index}
+              onClick={() => selection(item)}
+              style={{
+                backgroundColor:
+                  index === selectedIndex ? "#f5f5f5" : "transparent",
+              }}
+            >
               <span>🌫️</span>
               <span>{item?.name}</span>
             </ItemContainer>

@@ -13,7 +13,6 @@ export function Btn1({
   type = "button",
   border,
   height,
-  decoration,
 }) {
   return (
     <Container
@@ -25,12 +24,11 @@ export function Btn1({
       onClick={func}
       $border={border}
       $height={height}
-      $decoration={decoration}
     >
       <section className="content">
-        <Icono $color={color}>{icon}</Icono>
+        {icon && <Icono $color={color}>{icon}</Icono>}
         {title && (
-          <span className="btn">
+          <span className="btn-text">
             {url ? (
               <a href={url} target="_blank" rel="noopener noreferrer">
                 {title}
@@ -47,98 +45,60 @@ export function Btn1({
 
 const Container = styled.button`
   position: relative;
-  box-sizing: border-box;
-  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 24px;
-  font-size: 15px;
-  border-radius: 16px;
-  background-color: ${(props) => props.$bgColor};
-  color: ${(props) => props.$color};
-  border: none;
 
-  /* Modern 3D effect using box-shadow instead of border-bottom */
-  box-shadow:
-    0 4px 0 rgba(0, 0, 0, 0.15),
-    0 5px 15px rgba(0, 0, 0, 0.15);
-  transform: translateY(-3px);
+  /* Moderno y Minimalista */
+  background-color: ${(props) => props.$bgColor || "#5D3FD3"};
+  color: ${(props) => props.$color || "#fff"};
+  width: ${(props) => props.$width || "100%"};
+  height: ${(props) => props.$height || "auto"};
+  border: ${(props) => props.$border || "none"};
+
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  padding: 12px 24px;
+  border-radius: 8px; /* Bordes suavemente redondeados, más tech */
 
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: all 0.3s ease;
+  box-shadow:
+    0 4px 6px -1px rgba(93, 63, 211, 0.2),
+    0 2px 4px -1px rgba(93, 63, 211, 0.1);
 
-  width: ${(props) => props.$width};
-  height: ${(props) => props.$height};
-  overflow: hidden;
-
-  /* Decoration 1: Subtle glow circle */
-  &::before {
-    content: "";
-    display: ${(props) => props.$decoration};
-    width: 60px;
-    height: 60px;
-    background: rgba(255, 255, 255, 0.15);
-    position: absolute;
-    border-radius: 50%;
-    bottom: -20px;
-    right: -20px;
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  /* Decoration 2: Top gloss/shine */
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 40%;
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.2) 0%,
-      rgba(255, 255, 255, 0) 100%
-    );
-    border-radius: 16px 16px 0 0;
-    pointer-events: none;
-  }
-
-  .content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    align-items: center;
-  }
-
+  /* Hover sutil */
   &:hover {
-    transform: translateY(-5px);
+    transform: translateY(-2px);
     box-shadow:
-      0 6px 0 rgba(0, 0, 0, 0.15),
-      0 10px 25px rgba(0, 0, 0, 0.2);
-    filter: brightness(1.05);
+      0 10px 15px -3px rgba(93, 63, 211, 0.3),
+      0 4px 6px -2px rgba(93, 63, 211, 0.1);
+    filter: brightness(1.1);
   }
 
   &:active {
-    transform: translateY(-1px);
-    box-shadow:
-      0 2px 0 rgba(0, 0, 0, 0.15),
-      0 2px 5px rgba(0, 0, 0, 0.1);
+    transform: translateY(0);
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
   }
 
   &[disabled] {
-    background-color: #646464;
-    color: #a0a0a0;
+    background-color: #cbd5e1;
+    color: #94a3b8;
     cursor: not-allowed;
     box-shadow: none;
     transform: none;
-    filter: grayscale(1);
+  }
 
-    &::before,
-    &::after {
-      display: none;
-    }
+  .content {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  a {
+    text-decoration: none;
+    color: inherit;
   }
 `;

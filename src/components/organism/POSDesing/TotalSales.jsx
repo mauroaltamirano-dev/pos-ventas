@@ -3,8 +3,15 @@ import { Btn1 } from "../../molecules/Btn1";
 import { Device } from "../../../styles/breakpoints";
 import { v } from "../../../styles/variables";
 import { Icon } from "@iconify/react";
+import { useSalesCartStore } from "../../../index.js";
+import { FormatNumber } from "../../../index.js";
+import { useCompanyStore } from "../../../index.js";
 
 export function TotalSales() {
+  // const { total } = useDetailsSalesStore();
+  const { total, setStatePayment } = useSalesCartStore();
+  const { companyData } = useCompanyStore();
+
   return (
     <Total>
       <section className="image">
@@ -15,9 +22,12 @@ export function TotalSales() {
         />
       </section>
       <section className="contentTotal">
-        <span>$10.000</span>
+        <span>
+          {FormatNumber(total, companyData?.currency, companyData?.iso, 2)}
+        </span>
         <section className="contentTotalTitle">
           <Btn1
+            func={() => setStatePayment({ typePayment: "CRÉDITO" })}
             title={"COBRAR"}
             bgColor={"#fff"}
             color={"rgb(38, 143, 0)"}
@@ -53,7 +63,7 @@ const Total = styled.div`
   text-align: center;
   justify-content: space-between;
   font-weight: 700;
-  font-size: 40px;
+  font-size: 35px;
   background-color: rgb(38, 143, 0);
   padding: 10px;
   color: #e0ebc5;
@@ -63,8 +73,8 @@ const Total = styled.div`
   &::after {
     content: "";
     display: block;
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    height: 90px;
     background-color: rgba(198, 229, 77, 0.2);
     position: absolute;
     border-radius: 50%;
@@ -75,8 +85,8 @@ const Total = styled.div`
   &::before {
     content: "";
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     background-color: ${({ theme }) => theme.bgTotal};
     position: absolute;
     border-radius: 50%;

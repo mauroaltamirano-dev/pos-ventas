@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
-export function InputText({ children, icono }) {
+export function InputText({ children, icono, textalign }) {
   return (
-    <Container>
+    <Container $textalign={textalign}>
       <span>{icono}</span>
 
       <div className="form__group field">{children}</div>
@@ -41,6 +41,8 @@ const Container = styled.div`
     padding: 7px 0;
     background: transparent;
     transition: border-color 0.2s;
+    text-align: ${(props) => props.textalign};
+
     &.disabled {
       color: #696969;
       background: #2d2d2d;
@@ -74,7 +76,11 @@ const Container = styled.div`
     padding-bottom: 6px;
     font-weight: 700;
     border-width: 1px;
-    border-image: linear-gradient(to right, #ec580e, #f23505);
+    border-image: linear-gradient(
+      to right,
+      ${({ theme }) => theme.primary},
+      ${({ theme }) => theme.primary}AA
+    );
     border-image-slice: 1;
   }
 
@@ -84,7 +90,7 @@ const Container = styled.div`
     display: block;
     transition: 0.2s;
     font-size: 17px;
-    color: #f9632c;
+    color: ${({ theme }) => theme.primary};
     font-weight: 700;
   }
 

@@ -2,16 +2,24 @@
 import styled from "styled-components";
 import { Device } from "../../styles/breakpoints.jsx";
 import { v } from "../../styles/variables.jsx";
+import { blurIn } from "../../styles/keyframes.jsx";
 import {
   HeaderSales,
   AreaDetailsSales,
   AreaKeyboardSales,
   FooterSales,
+  AreaPayment,
+  useSalesCartStore,
 } from "../../index.js";
+import { Toaster } from "sonner";
 
 export function SalesTemplate() {
+  const { statePayment } = useSalesCartStore();
+
   return (
     <Container>
+      <Toaster richColors position="top-center" />
+      {statePayment && <AreaPayment />}
       <HeaderSales />
       <Main>
         <ItemSales>
@@ -25,8 +33,9 @@ export function SalesTemplate() {
 }
 
 const Container = styled.div`
-  min-height: calc(100vh - 50px);
+  min-height: calc(100vh - 70px);
   padding: 10px;
+  padding-top: 50px;
   display: grid;
   gap: 10px;
   grid-template-areas:
@@ -35,7 +44,6 @@ const Container = styled.div`
   grid-template-rows: auto 1fr;
   background-color: ${({ theme }) => theme.bgTotal};
   overflow: hidden;
-  margin-top: 40px;
 
   @media ${Device.desktop} {
     padding: 20px;
@@ -45,8 +53,10 @@ const Container = styled.div`
       "main"
       "footer";
     grid-template-rows: auto 1fr auto;
-    margin-top: 0;
+    padding-top: 50px;
   }
+
+  animation: ${blurIn} 0.5s ease-in-out;
 `;
 
 const ItemSales = styled.section`

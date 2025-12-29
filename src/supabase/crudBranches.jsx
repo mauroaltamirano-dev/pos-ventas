@@ -19,3 +19,10 @@ export async function ShowBranches(p) {
   // }
   return data;
 }
+
+export async function ShowAssignBranchForUser(p) {
+  const { data } = await supabase.rpc("showassingsbranch", {
+    _id_user: p.id_user,
+  });
+  return data;
+}

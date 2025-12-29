@@ -27,6 +27,20 @@ export async function ShowStockStoreForBranch(p) {
   return data;
 }
 
+export async function ShowStoreForBranch(p) {
+  const { data, error } = await supabase
+    .from(table)
+    .select()
+    .eq("id_branch", p.id_branch);
+
+  if (error) {
+    console.log("ERROR SHOW STORE:", error);
+    return null;
+  }
+
+  return data; // <-- ahora es un array con todos los productos de esa sucursal
+}
+
 export async function DeleteStockStore(p) {
   const { error } = await supabase.from(table).delete().eq("id", p.id);
 
